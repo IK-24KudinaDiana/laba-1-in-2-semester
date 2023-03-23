@@ -1,30 +1,35 @@
-﻿//Написати програму згідно отриманого завдання використовуючи колекції C#.
-
-//Дано список цілих чисел і число X. Не використовуючи допоміжних об'єктів і не змінюючи розміру списку, переставити елементи списку наступним чином:
-//Задати Х з клавіатури
-//Нехай x=5
-//Було: 1 2 3 4 5 6 7 8 9
-//Стало: 4 3 2 1 5 9 8 7 6
-
+﻿//Написати програму згідно отриманого завдання використовуючи словники Dictionary в C#.
+//	Якщо результатом виконання програми є словник, зберегти цей результат у JSON файл
+//Дано словник.
+//	Вивести тільки ті позиції словника, в яких ключ більший або дорівнює заданому значенню. 
+//	Повернути null, якщо такого ключа не існує.Записати у JSON
+using Newtonsoft.Json;
 do
 {
 	Console.Clear();
-	int number;
-	if (TryInputValue("Введiть число вiд 1 до 9: ", out number))
+	int n;
+	if (TryInputValue("Введiть значення: ", out n))
 	{
-		List<int> list = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		ListOutput(number, list);
-		ActionsWithAList(number, ref list);
-		ListOutput(number, list);
+		Dictionary<int, string> MyDictionary = new Dictionary<int, string>()
+		{
+			{ 1, "The moon" },
+			{ 2, "Earth" },
+			{ 3, "Sun " },
+			{ 4, "Mars" }
+		};
+		Dictionary<int, string> MyDictionary1 = new Dictionary<int, string>();
+
+		KeyVerification(MyDictionary, n);
+		ActionsWithTheDictionary(MyDictionary, ref MyDictionary1, n);
+		Json(MyDictionary1);
+
 	}
 
 	Console.WriteLine("\n You want to complete the program: yes or no");
 } while (!(string.Equals(Console.ReadLine(), "yes", StringComparison.OrdinalIgnoreCase)));
-
-
 static bool TryInputValue(string argumentName, out int value)
 {
-	Console.WriteLine($"{argumentName}");
+	Console.Write($"{argumentName}");
 	string stringValue = Console.ReadLine();
 	if (int.TryParse(stringValue, out value))
 	{
@@ -33,28 +38,34 @@ static bool TryInputValue(string argumentName, out int value)
 	Console.WriteLine($"You wrote incorrect value {stringValue}");
 	return false;
 }
-static void ListOutput(int number, List<int> list)
-{
-	Console.WriteLine();
-	foreach (int i in list)
-		Console.Write(i + "   ");
-	Console.WriteLine();
-}
 
-static void ActionsWithAList(int number, ref List<int> list)
+static void Json(Dictionary<int, string> MyDictionary1)
 {
-	for (int i = 0; i < list.Count; i++)
+	string file = "E:\\Навчання\\1.txt";
+	string json = JsonConvert.SerializeObject(MyDictionary1);
+	StreamWriter sw = new StreamWriter(file);
+	sw.WriteLine(json);
+	sw.Close();
+}
+static void ActionsWithTheDictionary(Dictionary<int, string> MyDictionary, ref Dictionary<int, string> MyDictionary1, int n)
+{
+	int k = 1;
+	foreach (var key in MyDictionary)
 	{
-		if (list[i] == number)
+		if (k >= n)
 		{
-			list.Reverse(0, number - 1);
-			list.Reverse(number, 9 - number);
-		}	
+			Console.WriteLine($"key: {key.Key}  value: {key.Value}");
+			MyDictionary1.Add(key.Key, key.Value);
+		}
+		k++;
 	}
 }
-
-
-
-
-
-
+static void KeyVerification(Dictionary<int, string> MyDictionary, int n)
+{
+	bool DictionaryKey = MyDictionary.ContainsKey(n);
+	if (DictionaryKey == false)
+	{
+		Console.WriteLine("null");
+	}
+	//Console.WriteLine($"Key: {DictionaryKey}");
+}
